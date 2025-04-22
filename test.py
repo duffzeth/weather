@@ -14,8 +14,8 @@ aeropuertos = {
     "GCGM - La Gomera": (28.0296, -17.2146),
 }
 
-API_KEY = "Gqtw5BUEcQDIk4eb"
-BASE_URL = "https://my.meteoblue.com/packages/basic-1h_clouds-1h"
+API_KEY = "gVphN31ARLcKGzX7"
+BASE_URL = "https://my.meteoblue.com/packages/basic-1h_basic-day_clouds-1h_clouds-day"
 
 # Streamlit UI
 st.set_page_config(page_title="Meteo Aeropuertos Canarias", layout="centered")
