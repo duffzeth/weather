@@ -3,10 +3,7 @@ import requests
 import datetime
 import pandas as pd
 
-# === Configuración ===
-API_KEY = "Gqtw5BUEcQDIk4eb"
-BASE_URL = "https://my.meteoblue.com/packages/basic-1h_clouds-1h"
-
+# Aeropuertos y coordenadas
 aeropuertos = {
     "GCLP - Gran Canaria": (27.9319, -15.3866),
     "GCXO - Tenerife Norte": (28.4827, -16.3415),
@@ -16,6 +13,9 @@ aeropuertos = {
     "GCHI - El Hierro": (27.8148, -17.8871),
     "GCGM - La Gomera": (28.0296, -17.2146),
 }
+
+API_KEY = "gVphN31ARLcKGzX7"
+BASE_URL = "https://my.meteoblue.com/packages/basic-1h_basic-day_clouds-1h_clouds-day"
 
 def pictocode_to_emoji(code):
     if code == 1:
