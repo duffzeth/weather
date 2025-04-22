@@ -104,30 +104,44 @@ if consultar:
                             "☁️ Nubosidad (%)", "☁️ Techo nubes (m)", "👁️ Visibilidad (m)",
                             "Icono", "🚨 Alerta", "📡 Origen"]
 
-                # Estilo HTML para tabla
+                # === Tabla visual con mejor compatibilidad ===
                 html_table = f"""
                 <style>
+                    .custom-container {{
+                        display: flex;
+                        justify-content: center;
+                    }}
                     .custom-table {{
-                        margin: auto;
                         border-collapse: collapse;
+                        width: 95%;
+                        max-width: 900px;
+                        background-color: #fff;
+                        color: #000;
                         font-family: Arial, sans-serif;
+                        margin: 0 auto;
+                        border-radius: 8px;
+                        overflow: hidden;
                     }}
                     .custom-table th, .custom-table td {{
-                        border: 1px solid #ddd;
+                        border: 1px solid #ccc;
                         padding: 10px;
                         text-align: center;
                     }}
                     .custom-table th {{
-                        background-color: #f2f2f2;
+                        background-color: #e6e6e6;
                         color: #333;
                     }}
                     .custom-table tr:nth-child(even) {{ background-color: #f9f9f9; }}
                     .custom-table tr:hover {{ background-color: #f1f1f1; }}
                 </style>
 
-                <div style="text-align: center;">
-                    <h3>🌍 Resultados meteorológicos para {aeropuerto.split('-')[0].strip()} ({fecha_str})</h3>
-                    {df[columnas].to_html(classes='custom-table', index=False, escape=False)}
+                <div class="custom-container">
+                    <div>
+                        <h3 style="text-align: center;">🌍 Resultados meteorológicos para {aeropuerto.split('-')[0].strip()} ({fecha_str})</h3>
+                        <div style="overflow-x: auto;">
+                            {df[columnas].to_html(classes='custom-table', index=False, escape=False)}
+                        </div>
+                    </div>
                 </div>
                 """
 
