@@ -37,38 +37,28 @@ def alerta(temp):
     else:
         return "🟢"
 
-# === Interfaz ===
 st.set_page_config(page_title="Meteo Aeropuertos Canarias", layout="centered")
-st.markdown("<h1 style='text-align: center;'>🌦️ Consulta meteorológica - Aeropuertos de Canarias</h1>", unsafe_allow_html=True)
+st.title("🌦️ Consulta meteorológica - Aeropuertos de Canarias")
 
 aeropuerto = st.selectbox("✈️ Aeropuerto", list(aeropuertos.keys()))
-fecha = st.date_input(
-    "📅 Fecha (hasta 3 días vista)",
-    min_value=datetime.date.today(),
-    max_value=datetime.date.today() + datetime.timedelta(days=3)
-)
+fecha = st.date_input("📅 Fecha (hasta 3 días vista)", min_value=datetime.date.today(),
+                      max_value=datetime.date.today() + datetime.timedelta(days=3))
 consultar = st.button("🔍 Consultar")
 
-# === Lógica principal ===
 if consultar:
     lat, lon = aeropuertos[aeropuerto]
-    url = (
-        f"{BASE_URL}?lat={lat}&lon={lon}"
-        f"&apikey={API_KEY}&format=json"
-        f"&windspeed=kn&winddirection=degree"
-    )
+    url = f"{BASE_URL}?lat={lat}&lon={lon}&apikey={API_KEY}&format=json&windspeed=kn&winddirection=degree"
 
     response = requests.get(url)
     if response.status_code == 200:
         json_data = response.json()
-
         if "data_1h" in json_data:
             data = json_data["data_1h"]
             df = pd.DataFrame({
                 "FechaHora": pd.to_datetime(data["time"]),
-                "🌡️ Temp (°C)": data["temperature"],
-                "🌬️ Viento (kt)": data["windspeed"],
-                "🧭 Dirección (°)": data.get("winddirection", [None]*len(data["time"])),
+                "Temp (°C)": data["temperature"],
+                "Viento (kt)": data["windspeed"],
+                "Dirección (°)": data.get("winddirection", [None]*len(data["time"])),
                 "Icono": [pictocode_to_emoji(c) for c in data.get("pictocode", [0]*len(data["time"]))]
             })
 
@@ -81,54 +71,10 @@ if consultar:
             if df.empty:
                 st.warning("⚠️ No hay datos para esa fecha y franjas horarias.")
             else:
-                df["🚨 Alerta"] = df["🌡️ Temp (°C)"].apply(alerta)
-                df["📡 Origen"] = "Meteoblue"
-
-                columnas = ["Hora", "🌡️ Temp (°C)", "🌬️ Viento (kt)", "🧭 Dirección (°)", "Icono", "🚨 Alerta", "📡 Origen"]
-
-                # === ESTILO HTML + TABLA ===
-                html_table = f"""
-                <style>
-                    .custom-container {{
-                        display: flex;
-                        justify-content: center;
-                        margin-top: 20px;
-                    }}
-                    .custom-table {{
-                        border-collapse: collapse;
-                        width: 95%;
-                        max-width: 900px;
-                        background-color: #fff;
-                        color: #000;
-                        font-family: Arial, sans-serif;
-                        margin: 0 auto;
-                        border-radius: 8px;
-                        overflow: hidden;
-                    }}
-                    .custom-table th, .custom-table td {{
-                        border: 1px solid #ccc;
-                        padding: 10px;
-                        text-align: center;
-                    }}
-                    .custom-table th {{
-                        background-color: #e6e6e6;
-                        color: #333;
-                    }}
-                    .custom-table tr:nth-child(even) {{ background-color: #f9f9f9; }}
-                    .custom-table tr:hover {{ background-color: #f1f1f1; }}
-                </style>
-
-                <div class="custom-container">
-                    <div>
-                        <h3 style="text-align: center;">🌍 Resultados meteorológicos para {aeropuerto.split('-')[0].strip()} ({fecha_str})</h3>
-                        <div style="overflow-x: auto;">
-                            {df[columnas].to_html(classes='custom-table', index=False, escape=False)}
-                        </div>
-                    </div>
-                </div>
-                """
-
-                st.markdown(html_table, unsafe_allow_html=True)
+                df["Alerta"] = df["Temp (°C)"].apply(alerta)
+                df["Origen"] = "Meteoblue"
+                df = df[["Hora", "Temp (°C)", "Viento (kt)", "Dirección (°)", "Icono", "Alerta", "Origen"]]
+                st.dataframe(df, use_container_width=True)
         else:
             st.error("❌ La respuesta no contiene 'data_1h'.")
     else:
