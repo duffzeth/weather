@@ -128,7 +128,6 @@ if consultar:
                 </div>
                 """
 
-                # 👇 SOLO ESTA LÍNEA muestra la tabla
                 st.markdown(html_table, unsafe_allow_html=True)
         else:
             st.error("❌ La respuesta no contiene 'data_1h'.")
