@@ -29,14 +29,6 @@ def pictocode_to_emoji(code):
     else:
         return "⛈️"
 
-def visibilidad_color(km):
-    if km >= 10:
-        return f"🟢 {km} km"
-    elif km >= 5:
-        return f"🟡 {km} km"
-    else:
-        return f"🔴 {km} km"
-
 def alerta(temp):
     if temp >= 30:
         return "🔴"
@@ -47,7 +39,6 @@ def alerta(temp):
 
 # === Interfaz ===
 st.set_page_config(page_title="Meteo Aeropuertos Canarias", layout="centered")
-
 st.markdown("<h1 style='text-align: center;'>🌦️ Consulta meteorológica - Aeropuertos de Canarias</h1>", unsafe_allow_html=True)
 
 aeropuerto = st.selectbox("✈️ Aeropuerto", list(aeropuertos.keys()))
@@ -78,33 +69,23 @@ if consultar:
                 "🌡️ Temp (°C)": data["temperature"],
                 "🌬️ Viento (kt)": data["windspeed"],
                 "🧭 Dirección (°)": data.get("winddirection", [None]*len(data["time"])),
-                "☁️ Nubosidad (%)": data.get("cloudcover", [None]*len(data["time"])),
-                "☁️ Techo nubes (m)": data.get("cloudbase", [None]*len(data["time"])),
-                "👁️ Visibilidad (m)": data.get("visibility", [None]*len(data["time"])),
                 "Icono": [pictocode_to_emoji(c) for c in data.get("pictocode", [0]*len(data["time"]))]
             })
 
-            # Filtrar por fecha y franjas horarias
             fecha_str = fecha.strftime("%Y-%m-%d")
+            franjas = ["06:00", "10:00", "14:00", "18:00", "22:00"]
             df["Hora"] = df["FechaHora"].dt.strftime("%H:%M")
             df["Fecha"] = df["FechaHora"].dt.strftime("%Y-%m-%d")
-            franjas = ["06:00", "10:00", "14:00", "18:00", "22:00"]
             df = df[(df["Fecha"] == fecha_str) & (df["Hora"].isin(franjas))]
 
             if df.empty:
                 st.warning("⚠️ No hay datos para esa fecha y franjas horarias.")
             else:
-                df["👁️ Visibilidad (m)"] = df["👁️ Visibilidad (m)"].apply(
-                    lambda m: visibilidad_color(round(m / 1000, 1)) if isinstance(m, (int, float)) else "—"
-                )
                 df["🚨 Alerta"] = df["🌡️ Temp (°C)"].apply(alerta)
                 df["📡 Origen"] = "Meteoblue"
 
-                columnas = ["Hora", "🌡️ Temp (°C)", "🌬️ Viento (kt)", "🧭 Dirección (°)",
-                            "☁️ Nubosidad (%)", "☁️ Techo nubes (m)", "👁️ Visibilidad (m)",
-                            "Icono", "🚨 Alerta", "📡 Origen"]
+                columnas = ["Hora", "🌡️ Temp (°C)", "🌬️ Viento (kt)", "🧭 Dirección (°)", "Icono", "🚨 Alerta", "📡 Origen"]
 
-                # === Tabla visual con mejor compatibilidad ===
                 html_table = f"""
                 <style>
                     .custom-container {{
