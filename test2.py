@@ -86,11 +86,13 @@ if consultar:
 
                 columnas = ["Hora", "🌡️ Temp (°C)", "🌬️ Viento (kt)", "🧭 Dirección (°)", "Icono", "🚨 Alerta", "📡 Origen"]
 
+                # === ESTILO HTML + TABLA ===
                 html_table = f"""
                 <style>
                     .custom-container {{
                         display: flex;
                         justify-content: center;
+                        margin-top: 20px;
                     }}
                     .custom-table {{
                         border-collapse: collapse;
@@ -126,6 +128,7 @@ if consultar:
                 </div>
                 """
 
+                # 👇 SOLO ESTA LÍNEA muestra la tabla
                 st.markdown(html_table, unsafe_allow_html=True)
         else:
             st.error("❌ La respuesta no contiene 'data_1h'.")
